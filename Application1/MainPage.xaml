@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -6,53 +7,100 @@
     x:Class="Application1.MainPage">
 
     <ContentPage.Resources>
-        <StyleSheetExtension Source="/Resources/Styles/styles.css" />
+        <StyleSheet Source="/Resources/Styles/styles.css" />
     </ContentPage.Resources>
-    
+
     <ContentPage.BindingContext>
-        <viewModels:NotesViewModel/>
+        <viewModels:NotesViewModel />
     </ContentPage.BindingContext>
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,*">
+
+        <!-- TOP SECTION -->
+        <VerticalStackLayout
+            Grid.Row="0"
+            Spacing="15">
 
             <Label
                 Text="Simple Notes App"
                 FontSize="28"
                 FontAttributes="Bold"
                 HorizontalOptions="Center"
-                StyleClass="titleLabel"/>
+                StyleClass="titleLabel" />
 
             <Entry
                 Placeholder="Enter Note Title"
-                Text="{Binding NoteTitle,Mode=TwoWay}"
-                StyleClass="inputEntry"/>
+                Text="{Binding NoteTitle, Mode=TwoWay}"
+                StyleClass="inputEntry" />
 
             <Editor
-                Placeholder="Enter Note Descriptio"
+                Placeholder="Enter Note Description"
                 HeightRequest="120"
-                Text="{Binding NoteDescription,Mode=TwoWay}" 
-                StyleClass="inputEntry"/>
+                AutoSize="Disabled"
+                VerticalOptions="Start"
+                Text="{Binding NoteDescription, Mode=TwoWay}"
+                StyleClass="inputEntry" />
 
             <Button
-                Text="Add / Update Note"
-                Command="{Binding AddOrUpdateNoteCommand}" 
-                StyleClass="addButton"/>
+                Text="{Binding ButtonText}"
+                Command="{Binding AddOrUpdateNoteCommand}"
+                StyleClass="addButton" />
 
-            <CollectionView ItemsSource="{Binding Notes}">
+        </VerticalStackLayout>
+
+        <!-- NOTES CONTAINER -->
+        <Frame
+            Grid.Row="1"
+            IsVisible="{Binding HasNotes}"
+            Margin="0,20,0,0"
+            Padding="10"
+            BorderColor="LightGray"
+            CornerRadius="15"
+            HasShadow="True">
+
+            <CollectionView
+                ItemsSource="{Binding Notes}">
+
                 <CollectionView.ItemTemplate>
+
                     <DataTemplate>
-                        <Frame StyleClass="noteFrame">
-                            <VerticalStackLayout>
+
+                        <Frame
+                            StyleClass="noteFrame"
+                            Margin="0,0,0,15">
+
+                            <VerticalStackLayout Spacing="8">
 
                                 <Label
                                     Text="{Binding Title}"
-                                    StyleClass="noteTitle"/>
+                                    StyleClass="noteTitle" />
 
-                                <Label
-                                    Text="{Binding Description}"
-                                    StyleClass="noteDescription"/>
+                                <!-- DESCRIPTION -->
+                                <FlexLayout
+                                    Wrap="Wrap"
+                                    Direction="Row"
+                                    AlignItems="Center">
 
+                                    <Label
+                                        Text="{Binding DescriptionText}"
+                                        StyleClass="noteDescription"
+                                        LineBreakMode="WordWrap" />
+
+                                    <Button
+                                        Text="{Binding MoreLessText}"
+                                        FontSize="14"
+                                        Padding="0"
+                                        Margin="5,0,0,0"
+                                        BackgroundColor="Transparent"
+                                        TextColor="Blue"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleDescriptionCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                </FlexLayout>
+
+                                <!-- BUTTONS -->
                                 <HorizontalStackLayout
                                     Spacing="12"
                                     Margin="0,10,0,0">
@@ -74,12 +122,17 @@
                                 </HorizontalStackLayout>
 
                             </VerticalStackLayout>
+
                         </Frame>
+
                     </DataTemplate>
+
                 </CollectionView.ItemTemplate>
+
             </CollectionView>
 
-        </VerticalStackLayout>
-    </ScrollView>
+        </Frame>
+
+    </Grid>
 
 </ContentPage>
